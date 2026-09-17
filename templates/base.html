@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{ title or "Crop Recommendation" }}</title>
+  <style>
+    :root{--bg:#0b1220;--card:#101a33;--txt:#e7ecff;--muted:#a9b3d6;--accent:#6ea8fe;--danger:#ff6b6b;--ok:#51cf66;}
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 700px at 20% 10%, #233a7a 0%, transparent 55%), radial-gradient(900px 600px at 80% 20%, #2b8a3e 0%, transparent 55%), var(--bg);color:var(--txt);padding:24px}
+    .card{width:min(960px, 100%);background:rgba(16,26,51,.9);border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr}
+    @media (max-width: 840px){.grid{grid-template-columns:1fr}}
+    .left{padding:28px 30px}
+    .right{padding:28px 30px;background:linear-gradient(180deg, rgba(110,168,254,.12), rgba(81,207,102,.08))}
+    h1{margin:0 0 6px;font-size:28px;letter-spacing:.2px}
+    p{margin:0 0 14px;color:var(--muted);line-height:1.4}
+    .brand{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+    .logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg, var(--accent), var(--ok));}
+    .badge{display:inline-flex;gap:8px;align-items:center;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:13px}
+    form{margin-top:18px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 520px){.row{grid-template-columns:1fr}}
+    label{display:block;margin:10px 0 6px;color:var(--muted);font-size:13px}
+    input, select{width:100%;padding:12px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.22);color:var(--txt);outline:none}
+    input:focus, select:focus{border-color:rgba(110,168,254,.55);box-shadow:0 0 0 4px rgba(110,168,254,.12)}
+    .btn{width:100%;margin-top:14px;padding:12px 14px;border-radius:12px;border:0;background:linear-gradient(135deg, var(--accent), #9b7bff);color:#081026;font-weight:700;cursor:pointer}
+    .btn:hover{filter:brightness(1.05)}
+    .links{margin-top:12px;font-size:14px;color:var(--muted)}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .flash{margin-top:10px;border-radius:12px;padding:10px 12px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);color:var(--txt)}
+    .flash.error{border-color:rgba(255,107,107,.35);background:rgba(255,107,107,.08)}
+    .flash.ok{border-color:rgba(81,207,102,.35);background:rgba(81,207,102,.08)}
+    .mini{font-size:13px;color:var(--muted)}
+    .ul{margin:10px 0 0;padding-left:18px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="card">
+    {% block body %}{% endblock %}
+  </div>
+</body>
+</html>

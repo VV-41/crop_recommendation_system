@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Crop Recommendation + Chatbot</title>
+
+  <style>
+    :root{
+      --bg: #0b1020;
+      --card: rgba(255,255,255,0.08);
+      --card2: rgba(255,255,255,0.06);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.65);
+      --line: rgba(255,255,255,0.10);
+      --accent: #7c5cff;
+      --accent2:#22c55e;
+      --danger:#ef4444;
+      --warn:#f59e0b;
+      --shadow: 0 18px 50px rgba(0,0,0,0.35);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background:
+        radial-gradient(900px 600px at 15% 10%, rgba(124,92,255,0.25), transparent 60%),
+        radial-gradient(800px 500px at 85% 20%, rgba(34,197,94,0.20), transparent 55%),
+        radial-gradient(900px 600px at 40% 95%, rgba(245,158,11,0.14), transparent 55%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .container{
+      max-width:1100px;
+      margin: 28px auto;
+      padding: 0 16px 40px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom: 18px;
+    }
+
+    .brand{
+      display:flex; gap:12px; align-items:center;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(124,92,255,1), rgba(34,197,94,1));
+      box-shadow: var(--shadow);
+    }
+    h1{
+      margin:0;
+      font-size: 22px;
+      letter-spacing: 0.2px;
+    }
+    .subtitle{
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card-header{
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+    }
+    .card-title{
+      margin:0;
+      font-size: 15px;
+      letter-spacing: 0.2px;
+    }
+    .card-desc{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .card-body{ padding: 16px; }
+
+    .alert{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(239,68,68,0.30);
+      background: rgba(239,68,68,0.12);
+      color: rgba(255,255,255,0.9);
+      font-size: 13px;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 640px){
+      .form-grid{ grid-template-columns: 1fr; }
+    }
+
+    .field label{
+      display:block;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 0 6px 2px;
+    }
+    .input{
+      width:100%;
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+      outline:none;
+      transition: 150ms ease;
+    }
+    .input:focus{
+      border-color: rgba(124,92,255,0.7);
+      box-shadow: 0 0 0 3px rgba(124,92,255,0.18);
+    }
+
+    .row{
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+      align-items:center;
+    }
+
+    .btn{
+      cursor:pointer;
+      border:none;
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-weight:600;
+      color: white;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.14);
+      transition: 150ms ease;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0px); }
+
+    .btn-primary{
+      background: linear-gradient(135deg, rgba(124,92,255,1), rgba(124,92,255,0.78));
+      border: 1px solid rgba(124,92,255,0.55);
+    }
+    .btn-green{
+      background: linear-gradient(135deg, rgba(34,197,94,1), rgba(34,197,94,0.75));
+      border: 1px solid rgba(34,197,94,0.55);
+    }
+    .btn-ghost{
+      background: rgba(255,255,255,0.06);
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+    }
+    .dot{
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent2);
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.18);
+    }
+    .dot-warn{
+      background: var(--warn);
+      box-shadow: 0 0 0 3px rgba(245,158,11,0.18);
+    }
+
+    pre{
+      margin: 12px 0 0;
+      padding: 12px;
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 16px;
+      color: rgba(255,255,255,0.85);
+      overflow:auto;
+      max-height: 220px;
+    }
+
+    /* Chat */
+    .chat-wrap{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .chat-box{
+      height: 360px;
+      overflow:auto;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .bubble{
+      max-width: 88%;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.10);
+      margin: 6px 0;
+      line-height: 1.35;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 13px;
+    }
+    .bubble.user{
+      margin-left:auto;
+      background: rgba(124,92,255,0.18);
+      border-color: rgba(124,92,255,0.32);
+    }
+    .bubble.bot{
+      margin-right:auto;
+      background: rgba(255,255,255,0.08);
+    }
+    .chat-input-row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .chat-input{
+      flex:1;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+      outline:none;
+    }
+    .muted{
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .quick{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top: 6px;
+    }
+    .small{
+      padding: 8px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+    }
+    .status{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top: 10px;
+    }
+    .error{
+      color: rgba(255,255,255,0.9);
+      background: rgba(239,68,68,0.14);
+      border: 1px solid rgba(239,68,68,0.30);
+      padding: 8px 10px;
+      border-radius: 14px;
+      font-size: 12px;
+      display:none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Crop Recommendation + Chatbot</h1>
+          <div class="subtitle">Flask • ML Prediction • Command-based assistant</div>
+        </div>
+      </div>
+
+      <div class="pill" id="healthPill">
+        <span class="dot dot-warn" id="healthDot"></span>
+        <span id="healthText">Checking model...</span>
+      </div>
+    </div>
+
+    {% if load_error %}
+      <div class="alert">
+        <b>Model Load Error:</b> {{ load_error }}
+      </div>
+    {% endif %}
+
+    <div class="grid">
+      <!-- Left: Prediction -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Predict Crop</h3>
+          <p class="card-desc">
+            Fill your soil & weather inputs, then click <b>Predict</b>.
+            Result shows the top crop recommendation and top-k list.
+          </p>
+        </div>
+
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="field">
+              <label>Nitrogen</label>
+              <input class="input" id="Nitrogen" placeholder="e.g., 90">
+            </div>
+            <div class="field">
+              <label>Phosphorus</label>
+              <input class="input" id="Phosphorus" placeholder="e.g., 40">
+            </div>
+            <div class="field">
+              <label>Potassium</label>
+              <input class="input" id="Potassium" placeholder="e.g., 40">
+            </div>
+            <div class="field">
+              <label>Rainfall (mm)</label>
+              <input class="input" id="Rainfall_mm" placeholder="e.g., 120">
+            </div>
+            <div class="field">
+              <label>Temperature (°C)</label>
+              <input class="input" id="Temperature_C" placeholder="e.g., 25">
+            </div>
+            <div class="field">
+              <label>Humidity (%)</label>
+              <input class="input" id="Humidity_percent" placeholder="e.g., 70">
+            </div>
+            <div class="field">
+              <label>Soil pH</label>
+              <input class="input" id="Soil_pH" placeholder="e.g., 6.5">
+            </div>
+            <div class="field">
+              <label>Soil Type</label>
+              <input class="input" id="Soil_Type" placeholder="e.g., Loamy">
+            </div>
+            <div class="field">
+              <label>Season</label>
+              <input class="input" id="Season" placeholder="e.g., Kharif">
+            </div>
+            <div class="field">
+              <label>State</label>
+              <input class="input" id="State" placeholder="e.g., Himachal Pradesh">
+            </div>
+            <div class="field">
+              <label>Previous Crop</label>
+              <input class="input" id="Previous_Crop" placeholder="e.g., Wheat">
+            </div>
+          </div>
+
+          <div class="row">
+            <button class="btn btn-primary" onclick="predictCrop()">Predict</button>
+            <button class="btn btn-ghost" onclick="fillSample()">Fill sample</button>
+            <span class="badge" id="predBadge" style="display:none;">
+              <span class="dot"></span>
+              <span id="predText">Prediction: —</span>
+            </span>
+          </div>
+
+          <div class="status">
+            <div class="error" id="predError"></div>
+          </div>
+
+          <pre id="result" aria-label="Prediction JSON output">{}</pre>
+        </div>
+      </div>
+
+      <!-- Right: Chat -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Command Chatbot</h3>
+          <p class="card-desc">
+            Only specific commands are allowed. Try <b>/help</b>.
+          </p>
+        </div>
+
+        <div class="card-body chat-wrap">
+          <div class="quick">
+            <button class="btn btn-ghost small" onclick="quickCmd('/help')">/help</button>
+            <button class="btn btn-ghost small" onclick="quickCmd('/tips rice')">/tips rice</button>
+            <button class="btn btn-ghost small" onclick="quickCmd('/ask What is NPK?')">/ask NPK</button>
+            <button class="btn btn-green small" onclick="recommendFromForm()">/recommend (from form)</button>
+          </div>
+
+          <div class="chat-box" id="chatBox"></div>
+
+          <div class="chat-input-row">
+            <input class="chat-input" id="chatInput" placeholder="Type a command... (Press Enter to send)">
+            <button class="btn btn-primary" type="button" onclick="sendChat()">Send</button>
+          </div>
+
+          <div class="muted">
+            Examples:
+            <b>/recommend 90 40 40 25 70 6.5 120</b>,
+            <b>/tips rice</b>,
+            <b>/ask what is soil pH?</b>
+          </div>
+
+          <div class="status">
+            <div class="error" id="chatError"></div>
+          <div class="weather-box">
+            <h3>🌦 Current Weather</h3>
+            <p>Temperature: {{ temperature }} °C</p>
+            <p>Wind Speed: {{ windspeed }} km/h</p>
+            </div>  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Helpers ----------
+    const predBadge = document.getElementById("predBadge");
+    const predText  = document.getElementById("predText");
+    const predError = document.getElementById("predError");
+
+    const chatBox   = document.getElementById("chatBox");
+    const chatInput = document.getElementById("chatInput");
+    const chatError = document.getElementById("chatError");
+
+    function showError(el, msg){
+      el.style.display = "block";
+      el.textContent = msg;
+    }
+    function clearError(el){
+      el.style.display = "none";
+      el.textContent = "";
+    }
+
+    function addBubble(text, who){
+      const div = document.createElement("div");
+      div.className = "bubble " + who;
+      div.textContent = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function getFormPayload(){
+      return {
+        Nitrogen: document.getElementById("Nitrogen").value,
+        Phosphorus: document.getElementById("Phosphorus").value,
+        Potassium: document.getElementById("Potassium").value,
+        Rainfall_mm: document.getElementById("Rainfall_mm").value,
+        Temperature_C: document.getElementById("Temperature_C").value,
+        Humidity_percent: document.getElementById("Humidity_percent").value,
+        Soil_pH: document.getElementById("Soil_pH").value,
+        Soil_Type: document.getElementById("Soil_Type").value,
+        Season: document.getElementById("Season").value,
+        State: document.getElementById("State").value,
+        Previous_Crop: document.getElementById("Previous_Crop").value
+      };
+    }
+
+    function fillSample(){
+      document.getElementById("Nitrogen").value = "90";
+      document.getElementById("Phosphorus").value = "40";
+      document.getElementById("Potassium").value = "40";
+      document.getElementById("Rainfall_mm").value = "120";
+      document.getElementById("Temperature_C").value = "25";
+      document.getElementById("Humidity_percent").value = "70";
+      document.getElementById("Soil_pH").value = "6.5";
+      document.getElementById("Soil_Type").value = "Loamy";
+      document.getElementById("Season").value = "Kharif";
+      document.getElementById("State").value = "Himachal Pradesh";
+      document.getElementById("Previous_Crop").value = "Wheat";
+    }
+
+    // ---------- Health check ----------
+    async function checkHealth(){
+      try{
+        const r = await fetch("/health");
+        const data = await r.json();
+        const dot = document.getElementById("healthDot");
+        const txt = document.getElementById("healthText");
+
+        if(data.ok && data.model_loaded){
+          dot.className = "dot";
+          txt.textContent = "Model loaded";
+        } else {
+          dot.className = "dot dot-warn";
+          txt.textContent = "Model not loaded";
+        }
+      } catch(e){
+        const dot = document.getElementById("healthDot");
+        const txt = document.getElementById("healthText");
+        dot.className = "dot dot-warn";
+        txt.textContent = "Health check failed";
+      }
+    }
+    checkHealth();
+
+    // ---------- Predict ----------
+    async function predictCrop() {
+      clearError(predError);
+      predBadge.style.display = "none";
+      document.getElementById("result").textContent = "Loading...";
+
+      const payload = getFormPayload();
+
+      try{
+        const res = await fetch("/predict", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+
+        if(!data.ok){
+          showError(predError, data.error || "Prediction failed.");
+          return;
+        }
+
+        predBadge.style.display = "inline-flex";
+        predText.textContent = "Prediction: " + data.prediction;
+
+      } catch(e){
+        document.getElementById("result").textContent = "{}";
+        showError(predError, "Network error: " + e);
+      }
+    }
+
+    // ---------- Chat ----------
+    async function sendChat(){
+      clearError(chatError);
+
+      const msg = chatInput.value.trim();
+      if(!msg) return;
+
+      addBubble(msg, "user");
+      chatInput.value = "";
+
+      try{
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ message: msg })
+        });
+
+        const data = await res.json();
+        addBubble(data.reply || "No reply", "bot");
+
+      } catch(e){
+        showError(chatError, "Chat error: " + e);
+      }
+    }
+
+    // Enter key sends message
+    chatInput.addEventListener("keydown", function(e){
+      if(e.key === "Enter"){
+        e.preventDefault();
+        sendChat();
+      }
+    });
+
+    function quickCmd(cmd){
+      chatInput.value = cmd;
+      sendChat();
+    }
+
+    function recommendFromForm(){
+      // Build /recommend N P K temp humidity ph rainfall from current form values
+      const N  = document.getElementById("Nitrogen").value || "0";
+      const P  = document.getElementById("Phosphorus").value || "0";
+      const K  = document.getElementById("Potassium").value || "0";
+      const t  = document.getElementById("Temperature_C").value || "0";
+      const h  = document.getElementById("Humidity_percent").value || "0";
+      const ph = document.getElementById("Soil_pH").value || "0";
+      const r  = document.getElementById("Rainfall_mm").value || "0";
+
+      quickCmd(`/recommend ${N} ${P} ${K} ${t} ${h} ${ph} ${r}`);
+    }
+  </script>
+</body>
+</html>

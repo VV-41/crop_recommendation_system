@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="grid">
+  <div class="left">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>Create account</h1>
+        <p>Register to save your soil records and recommendations.</p>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash {{ 'error' if category=='error' else 'ok' }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('register') }}">
+      <div class="row">
+        <div>
+          <label>Full Name</label>
+          <input name="name" placeholder="e.g., Vaibhav Vashisth" required />
+        </div>
+        <div>
+          <label>Mobile</label>
+          <input name="mobile" placeholder="10-digit mobile" pattern="[0-9]{10}" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>State</label>
+          <input name="state" placeholder="e.g., Himachal Pradesh" required />
+        </div>
+        <div>
+          <label>District</label>
+          <input name="district" placeholder="e.g., Kullu" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Password</label>
+          <input type="password" name="password" minlength="6" required />
+        </div>
+        <div>
+          <label>Confirm Password</label>
+          <input type="password" name="confirm_password" minlength="6" required />
+        </div>
+      </div>
+
+      <button class="btn" type="submit">Create Account</button>
+      <div class="links">
+        Already have an account? <a href="{{ url_for('login') }}">Login</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="right">
+    <span class="badge">✅ Secure login • ✅ Save history • ✅ Faster access</span>
+    <h2 style="margin:14px 0 8px;font-size:20px;">What you get</h2>
+    <ul class="ul">
+      <li>Save recommendations per farmer</li>
+      <li>Track soil inputs over time</li>
+      <li>Download reports later (next feature)</li>
+    </ul>
+    <p class="mini" style="margin-top:14px;">
+      Tip: Keep your password safe. You can add OTP later if needed.
+    </p>
+  </div>
+</div>
+{% endblock %}

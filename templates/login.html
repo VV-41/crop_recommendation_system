@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="grid">
+  <div class="left">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>Welcome back</h1>
+        <p>Login to continue to Crop Recommendation.</p>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash {{ 'error' if category=='error' else 'ok' }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('login') }}">
+      <label>Mobile</label>
+      <input name="mobile" placeholder="10-digit mobile" pattern="[0-9]{10}" required />
+
+      <label>Password</label>
+      <input type="password" name="password" required />
+
+      <button class="btn" type="submit">Login</button>
+
+      <div class="links">
+        New user? <a href="{{ url_for('register') }}">Create an account</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="right">
+    <span class="badge">🌾 Crop AI • ⚡ Fast • 🔒 Private</span>
+    <h2 style="margin:14px 0 8px;font-size:20px;">After login</h2>
+    <ul class="ul">
+      <li>Enter soil values</li>
+      <li>Get crop recommendations</li>
+      <li>Store results in your account</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
